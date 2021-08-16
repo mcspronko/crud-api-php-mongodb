@@ -10,7 +10,7 @@ use Slim\App;
 
 class Router
 {
-    public function configure(App $app)
+    public function configure(App $app): void
     {
         $app->addRoutingMiddleware();
         $app->addErrorMiddleware(true, true, true);
