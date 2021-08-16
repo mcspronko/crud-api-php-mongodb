@@ -1,0 +1,26 @@
+{
+    "name": "maxpronko/php-mongodb-crud-sandbox",
+    "description": "CRUD with PHP and MongoDB",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Max Pronko",
+            "email": "max@pronkoconsulting.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "slim/slim": "4.*",
+        "slim/psr7": "^1.4",
+        "mongodb/mongodb": "^1.9",
+        "php-di/php-di": "^6.3",
+        "php-di/slim-bridge": "^3.1",
+        "devcoder-xyz/php-dotenv": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
