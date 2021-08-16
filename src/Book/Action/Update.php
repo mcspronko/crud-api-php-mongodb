@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Book\Action;
 
-use App\MongoDb\ClientFactory;
 use MongoDB\Client;
-use MongoDB\Model\BSONDocument;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -22,17 +20,21 @@ class Update
     public function __invoke(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $collection = $this->client->test->books;
-        $parsedBody = $request->getParsedBody();
-        $result = $collection->updateOne(
-            ['_id' => $parsedBody['id']],
+        $params = (array) $request->getParsedBody();
+
+        /** @var \MongoDB\Model\BSONDocument $result */
+        $result = $collection->findOneAndUpdate(
+            ['_id' => $params['id']],
             [
-                'name' => $parsedBody['name'],
-                'description' => $parsedBody['description']
-            ]
+                '$set' => [
+                    'name' => $params['name'],
+                    'description' => $params['description'],
+                ],
+            ],
+            ['upsert' => true]
         );
 
-        $id = (string) $result->getUpsertedId();
-        $data = ['id' => $id];
+        $data = ['success' => true];
 
         $response->getBody()->write(json_encode($data));
         return $response;

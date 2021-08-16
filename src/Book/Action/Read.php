@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Book\Action;
 
-use App\MongoDb\ClientFactory;
 use MongoDB\Client;
 use MongoDB\Model\BSONDocument;
 use Psr\Http\Message\RequestInterface;
