@@ -15,9 +15,9 @@ class Router
         $app->addRoutingMiddleware();
         $app->addErrorMiddleware(true, true, true);
 
+        $app->post('/create', Create::class);
         $app->get('/read', Read::class);
         $app->post('/update', Update::class);
         $app->post('/delete', Delete::class);
-        $app->post('/create', Create::class);
     }
 }

@@ -4,37 +4,35 @@ declare(strict_types=1);
 
 namespace App\Book\Action;
 
-use MongoDB\Client;
+use MongoDB\BSON\ObjectId;
+use MongoDB\Collection;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class Update
 {
-    private Client $client;
+    private Collection $collection;
 
-    public function __construct(Client $client)
+    public function __construct(Collection $collection)
     {
-        $this->client = $client;
+        $this->collection = $collection;
     }
 
     public function __invoke(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $collection = $this->client->test->books;
         $params = (array) $request->getParsedBody();
 
-        /** @var \MongoDB\Model\BSONDocument $result */
-        $result = $collection->findOneAndUpdate(
-            ['_id' => $params['id']],
+        $result = $this->collection->updateOne(
+            ['_id' => new ObjectId($params['id'])],
             [
                 '$set' => [
                     'name' => $params['name'],
                     'description' => $params['description'],
                 ],
             ],
-            ['upsert' => true]
         );
 
-        $data = ['success' => true];
+        $data = ['success' => $result->isAcknowledged()];
 
         $response->getBody()->write(json_encode($data));
         return $response;

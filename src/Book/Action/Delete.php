@@ -4,30 +4,31 @@ declare(strict_types=1);
 
 namespace App\Book\Action;
 
-use MongoDB\Client;
+use MongoDB\BSON\ObjectId;
+use MongoDB\Collection;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class Delete
 {
-    private Client $client;
+    private Collection $collection;
 
-    public function __construct(Client $client)
+    public function __construct(Collection $collection)
     {
-        $this->client = $client;
+        $this->collection = $collection;
     }
 
     public function __invoke(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $collection = $this->client->test->books;
-        $parsedBody = $request->getParsedBody();
-        $deleteResult = $collection->deleteOne([
-            '_id' => $parsedBody['id'],
+        $params = (array) $request->getParsedBody();
+        $deleteResult = $this->collection->deleteOne([
+            '_id' => new ObjectId($params['id']),
         ]);
 
+        $isDeleted = $deleteResult->getDeletedCount() > 0;
         $result = [
-            'result' => $deleteResult->getDeletedCount() > 0,
-            'message' => $deleteResult->getDeletedCount() > 0 ?
+            'result' => $isDeleted,
+            'message' => $isDeleted ?
                 'The book has been successfully deleted.' :
                 'Failed to delete book with the id provided.'
         ];
